@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vreme</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style></style>
+  </head>
+
+  <body>
+    <form id="lokacija">
+      <input type="text" placeholder="Type city" id="napisano-mesto" />
+      <input type="submit" value="Search" />
+    </form>
+    <h1>Somewhere</h1>
+
+    <h3>Today,time</h3>
+    <ul>
+      <li id="stopinje">Stopinje</li>
+      <li id="feels_like">Feels like</li>
+      <li id="vlaga">Vlaga</li>
+      <li id="veter">veter</li>
+    </ul>
+  </body>
+  <script>
+    function now() {
+      let time = new Date();
+      let hour = time.getHours();
+      let minute = time.getMinutes();
+      let stavek = `Today ${hour}:${minute}`;
+      let todayTime = document.querySelector("h3");
+      todayTime.innerHTML = stavek;
+    }
+    function napis(event) {
+      now();
+      event.preventDefault();
+
+      let h1 = document.querySelector("h1");
+      let napisano = document.querySelector("#napisano-mesto");
+      h1.innerHTML = napisano.value;
+
+      function napoved(response) {
+        console.log(response);
+
+        let stopinje = document.querySelector("#stopinje");
+        stopinje.innerHTML = `${Math.round(response.data.main.temp)} °C`;
+
+        let feelsLike = document.querySelector("#feels_like");
+        feelsLike.innerHTML = `${Math.round(response.data.main.feels_like)} °C`;
+
+        let vlaga = document.querySelector("#vlaga");
+        vlaga.innerHTML = `${Math.round(response.data.main.humidity)} %`;
+
+        let veter = document.querySelector("#veter");
+        veter.innerHTML = `${Math.round(response.data.wind.speed * 3.6)} km/h`;
+      }
+
+      function sestavi() {
+        let mesto = napisano.value;
+        let apiKey = "80ca9bc09bcdce0795252b3c82d6bba7";
+        let url = `https://api.openweathermap.org/data/2.5/weather?q=${mesto}&units=metric&appid=${apiKey}`;
+        axios.get(url).then(napoved);
+      }
+      sestavi();
+    }
+
+    let lokacija = document.querySelector("#lokacija");
+    lokacija.addEventListener("submit", napis);
+  </script>
+</html>
